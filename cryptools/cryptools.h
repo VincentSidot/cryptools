@@ -1,25 +1,32 @@
+/*
+Cryptools.h made by Vincent vs38190@gmail.com
+Programme en acces libre mais priere de me demander si utilisation professionel
+Program with free acces but you need to ask me before professional use
+*/
 #pragma once
 #include <string>
 
 #define elif else if
 
-typedef enum Alphabet
+typedef enum Alphabet //type permettant de choisir quel alphabet utilisé
 {
 	ALL, NORMAL, NUMUPPER, NUMLOWER,UPPER,LOWER,SPACEALL
 }ALPHABET,*PALPHABET;
-typedef enum Mode
+typedef enum Mode //type permettant de choisir les mode
 {
 	CRYPT,UNCRYPT
 }MODE,*PMODE;
 
+//differents alphabet;
 std::string sALL("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345789,?;\'\".:/!*-+\\=()_");
-std::string sSPACEALL("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345789,\'\"?;.:/!*-+\\=()_ ");
+std::string sSPACEALL("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345789,\'\"?;.:/!*-+\\=()_ "); //pareil que celui d'avant sauf que les espaces sont eu aussi chiffré
 std::string sNORMAL("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
 std::string sNUMUPPER("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
 std::string sNUMLOWER("abcdefghijklmnopqrstuvwxyz0123456789");
 std::string sUPPER("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 std::string sLOWER("abcdefghijklmnopqrstuvwxyz");
 
+//si le caractere n'appartient pas a l'alphabet utilisé
 const char unknowcar = 1;
 
 
@@ -28,28 +35,31 @@ class Cryptools
 public:
 	static inline std::string Vignere(std::string const &string, std::string const &key, ALPHABET const &alphabet = ALPHABET::ALL,MODE const &mode = MODE::CRYPT)
 	{
-		std::string ret = string;
-		std::string *ptr = chooseAlphabet(alphabet);
-		size_t i = 0;
+		std::string ret = string; //pour le ret
+		std::string *ptr = chooseAlphabet(alphabet); //permet de faire pointé ptr vers le bonne alphabet
+		size_t i = 0; //compteur
 		for (auto &car : ret)
 		{
-			car = to(car, alphabet);
-			if (testcharacter(car, ptr))
+			car = to(car, alphabet); // permet de mettre les lettre en min/maj selon le choix de l'alphabet
+			if (testcharacter(car, ptr)) //si le caractere appartient a l'alphabet
 			{
-				if(mode == MODE::CRYPT)
-					car =(*ptr)[(getpos(car, ptr) + getpos(to(key[i % key.size()], alphabet), ptr)) % ptr->size()];
-				else
-					car = (*ptr)[(ptr->size() + (getpos(car, ptr)) - getpos(to(key[i % key.size()], alphabet), ptr)) % ptr->size()];
+				if(mode == MODE::CRYPT) //si on crypt
+					car =(*ptr)[(getpos(car, ptr) + getpos(to(key[i % key.size()], alphabet), ptr)) % ptr->size()]; //gl&hf
+				else // sinon
+					car = (*ptr)[(ptr->size() + (getpos(car, ptr)) - getpos(to(key[i % key.size()], alphabet), ptr)) % ptr->size()]; //gl&hf
 
-				i++;
+				i++; // on incremente i
 			}
-			elif(car != ' ')
+			elif(car != ' ') //sinon si le caratcere n'appartient pas mais n'est pas un escpace
 			{
-				car = unknowcar;
+				car = unknowcar; //on le change
+				i++; // on incremente i
 			}
 		}
-		return ret;
+		return ret; // on retourn la string
 	}
+
+	//POUR LES AUTRE MEME FONCTIONEMENT MAIS IL Y A JUSTE LA LIGNE PERMETTANT D'APPLIQUER L'ALGO QUI CHANGE correspond aux gl&hf d'au dessus
 	static inline std::string PMS(std::string const &string, std::string const &key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
 	{
 		std::string ret = string;
@@ -70,6 +80,7 @@ public:
 			elif(car != ' ')
 			{
 				car = unknowcar;
+				i++;
 			}
 		}
 		return ret;
@@ -108,12 +119,12 @@ public:
 			if (testcharacter(car, ptr))
 			{
 				car = (*ptr)[(getpos(car, ptr) ^ getpos(to(key[i % key.size()], alphabet), ptr)) % ptr->size()];
-
 				i++;
 			}
 			elif(car != ' ')
 			{
 				car = unknowcar;
+				i++;
 			}
 		}
 		return ret;
@@ -149,7 +160,7 @@ private:
 			return &sALL;
 			break;
 		}
-	}
+	}//permet de faire pointé ptr vers le bonne alphabet
 	static inline char to(const char car,ALPHABET type)
 	{
 		switch (type)
@@ -178,16 +189,17 @@ private:
 			return car;
 			break;
 		}
-	}
-	static inline bool testcharacter(char const car,std::string *alphabet)
+	}// permet de mettre les lettre en min/maj selon le choix de l'alphabet
+	static inline bool testcharacter(char const car,std::string *alphabet) //test le caratctere
 	{
+		//on boucle dans l'alphabet et on regarde si le caractere appartient a celui ci alors on retourne true
 		for (auto &str : *alphabet)
 		{
-			if (car == str) return true;
+			if (car == str) return true; 
 		}
 		return false;
 	}
-	static inline size_t getpos(char car,std::string *alphabet)
+	static inline size_t getpos(char car,std::string *alphabet) //permet de chopper la position du caractere dans l'alphabet
 	{
 		for (int i = 0; i < alphabet->size(); i++)
 		{

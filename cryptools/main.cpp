@@ -1,12 +1,11 @@
+/*
+This is sample programm to show you how to use Cryptools
+*/
 #include <iostream>
 #include <string>
 #include <sstream>
 #include "cryptools.h"
 using namespace std;
-
-
-
-
 
 int main()
 {
