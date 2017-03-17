@@ -126,6 +126,56 @@ public:
 		}
 		return ret;
 	}
+	static std::string Cesar(std::string const &string, size_t key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
+	{
+		std::string ret = string;
+		std::string *ptr = NULL;
+		switch (alphabet)
+		{
+		case ALPHABET::ALL:
+			ptr = &sALL;
+			break;
+		case ALPHABET::SPACEALL:
+			ptr = &sSPACEALL;
+			break;
+		case ALPHABET::UPPER:
+			ptr = &sUPPER;
+			break;
+		case ALPHABET::LOWER:
+			ptr = &sLOWER;
+			break;
+		case ALPHABET::NORMAL:
+			ptr = &sNORMAL;
+			break;
+		case ALPHABET::NUMLOWER:
+			ptr = &sNUMLOWER;
+			break;
+		case ALPHABET::NUMUPPER:
+			ptr = &sNUMUPPER;
+			break;
+		default:
+			ptr = &sALL;
+			break;
+		}
+		size_t i = 0;
+		for (auto &car : ret)
+		{
+			car = to(car, alphabet);
+			if (testcharacter(car, ptr))
+			{
+				if (mode == MODE::CRYPT)
+					car = (*ptr)[(getpos(car, ptr) + key) % ptr->size()];
+				else
+					car = (*ptr)[(ptr->size() + (getpos(car, ptr)) - key ) % ptr->size()];
+			}
+			elif(car != ' ')
+			{
+				car = unknowcar;
+			}
+			i++;
+		}
+		return ret;
+	}
 
 private:
 	static char to(const char car,ALPHABET type)
