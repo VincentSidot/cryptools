@@ -12,51 +12,24 @@ typedef enum Mode
 	CRYPT,UNCRYPT
 }MODE,*PMODE;
 
-std::string sALL("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345789,?;.:/!*-+\\=()_");
-std::string sSPACEALL("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345789,?;.:/!*-+\\=()_ ");
+std::string sALL("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345789,?;\'\".:/!*-+\\=()_");
+std::string sSPACEALL("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345789,\'\"?;.:/!*-+\\=()_ ");
 std::string sNORMAL("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
 std::string sNUMUPPER("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
 std::string sNUMLOWER("abcdefghijklmnopqrstuvwxyz0123456789");
 std::string sUPPER("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 std::string sLOWER("abcdefghijklmnopqrstuvwxyz");
 
-const char unknowcar = '?';
+const char unknowcar = 1;
 
 
 class Cryptools
 {
 public:
-	static std::string Vignere(std::string const &string, std::string const &key, ALPHABET const &alphabet = ALPHABET::ALL,MODE const &mode = MODE::CRYPT)
+	static inline std::string Vignere(std::string const &string, std::string const &key, ALPHABET const &alphabet = ALPHABET::ALL,MODE const &mode = MODE::CRYPT)
 	{
 		std::string ret = string;
-		std::string *ptr = NULL;
-		switch(alphabet)
-		{
-		case ALPHABET::ALL:
-			ptr = &sALL;
-			break;
-		case ALPHABET::SPACEALL:
-			ptr = &sSPACEALL;
-			break;
-		case ALPHABET::UPPER:
-			ptr = &sUPPER;
-			break;
-		case ALPHABET::LOWER:
-			ptr = &sLOWER;
-			break;
-		case ALPHABET::NORMAL:
-			ptr = &sNORMAL;
-			break;
-		case ALPHABET::NUMLOWER:
-			ptr = &sNUMLOWER;
-			break;
-		case ALPHABET::NUMUPPER:
-			ptr = &sNUMUPPER;
-			break;
-		default:
-			ptr = &sALL;
-			break;
-		}
+		std::string *ptr = chooseAlphabet(alphabet);
 		size_t i = 0;
 		for (auto &car : ret)
 		{
@@ -67,46 +40,20 @@ public:
 					car =(*ptr)[(getpos(car, ptr) + getpos(to(key[i % key.size()], alphabet), ptr)) % ptr->size()];
 				else
 					car = (*ptr)[(ptr->size() + (getpos(car, ptr)) - getpos(to(key[i % key.size()], alphabet), ptr)) % ptr->size()];
+
+				i++;
 			}
 			elif(car != ' ')
 			{
 				car = unknowcar;
 			}
-			i++;
 		}
 		return ret;
 	}
-	static std::string PMS(std::string const &string, std::string const &key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
+	static inline std::string PMS(std::string const &string, std::string const &key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
 	{
 		std::string ret = string;
-		std::string *ptr = NULL;
-		switch (alphabet)
-		{
-		case ALPHABET::ALL:
-			ptr = &sALL;
-			break;
-		case ALPHABET::SPACEALL:
-			ptr = &sSPACEALL;
-			break;
-		case ALPHABET::UPPER:
-			ptr = &sUPPER;
-			break;
-		case ALPHABET::LOWER:
-			ptr = &sLOWER;
-			break;
-		case ALPHABET::NORMAL:
-			ptr = &sNORMAL;
-			break;
-		case ALPHABET::NUMLOWER:
-			ptr = &sNUMLOWER;
-			break;
-		case ALPHABET::NUMUPPER:
-			ptr = &sNUMUPPER;
-			break;
-		default:
-			ptr = &sALL;
-			break;
-		}
+		std::string *ptr = chooseAlphabet(alphabet);
 		size_t i = 0;
 		for (auto &car : ret)
 		{
@@ -117,46 +64,20 @@ public:
 					car = (*ptr)[(getpos(car, ptr) + (getpos(to(key[i % key.size()], alphabet), ptr)*(i+1))) % ptr->size()];
 				else
 					car = (*ptr)[( (ptr->size() * (i+1)) + (getpos(car, ptr)) - (getpos(to(key[i % key.size()], alphabet), ptr)*(i + 1))) % ptr->size()];
+
+				i++;
 			}
 			elif(car != ' ')
 			{
 				car = unknowcar;
 			}
-			i++;
 		}
 		return ret;
 	}
-	static std::string Cesar(std::string const &string, size_t key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
+	static inline std::string Cesar(std::string const &string, size_t key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
 	{
 		std::string ret = string;
-		std::string *ptr = NULL;
-		switch (alphabet)
-		{
-		case ALPHABET::ALL:
-			ptr = &sALL;
-			break;
-		case ALPHABET::SPACEALL:
-			ptr = &sSPACEALL;
-			break;
-		case ALPHABET::UPPER:
-			ptr = &sUPPER;
-			break;
-		case ALPHABET::LOWER:
-			ptr = &sLOWER;
-			break;
-		case ALPHABET::NORMAL:
-			ptr = &sNORMAL;
-			break;
-		case ALPHABET::NUMLOWER:
-			ptr = &sNUMLOWER;
-			break;
-		case ALPHABET::NUMUPPER:
-			ptr = &sNUMUPPER;
-			break;
-		default:
-			ptr = &sALL;
-			break;
-		}
+		std::string *ptr = chooseAlphabet(alphabet);
 		size_t i = 0;
 		for (auto &car : ret)
 		{
@@ -176,9 +97,60 @@ public:
 		}
 		return ret;
 	}
+	static inline std::string XOR(std::string const &string, std::string const &key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
+	{
+		std::string ret = string;
+		std::string *ptr = chooseAlphabet(alphabet);
+		size_t i = 0;
+		for (auto &car : ret)
+		{
+			car = to(car, alphabet);
+			if (testcharacter(car, ptr))
+			{
+				car = (*ptr)[(getpos(car, ptr) ^ getpos(to(key[i % key.size()], alphabet), ptr)) % ptr->size()];
+
+				i++;
+			}
+			elif(car != ' ')
+			{
+				car = unknowcar;
+			}
+		}
+		return ret;
+	}
 
 private:
-	static char to(const char car,ALPHABET type)
+	static inline std::string* chooseAlphabet(ALPHABET const &alphabet)
+	{
+		switch (alphabet)
+		{
+		case ALPHABET::ALL:
+			return &sALL;
+			break;
+		case ALPHABET::SPACEALL:
+			return &sSPACEALL;
+			break;
+		case ALPHABET::UPPER:
+			return &sUPPER;
+			break;
+		case ALPHABET::LOWER:
+			return &sLOWER;
+			break;
+		case ALPHABET::NORMAL:
+			return &sNORMAL;
+			break;
+		case ALPHABET::NUMLOWER:
+			return &sNUMLOWER;
+			break;
+		case ALPHABET::NUMUPPER:
+			return &sNUMUPPER;
+			break;
+		default:
+			return &sALL;
+			break;
+		}
+	}
+	static inline char to(const char car,ALPHABET type)
 	{
 		switch (type)
 		{
@@ -207,7 +179,7 @@ private:
 			break;
 		}
 	}
-	static bool testcharacter(char const car,std::string *alphabet)
+	static inline bool testcharacter(char const car,std::string *alphabet)
 	{
 		for (auto &str : *alphabet)
 		{
@@ -215,7 +187,7 @@ private:
 		}
 		return false;
 	}
-	static size_t getpos(char car,std::string *alphabet)
+	static inline size_t getpos(char car,std::string *alphabet)
 	{
 		for (int i = 0; i < alphabet->size(); i++)
 		{
