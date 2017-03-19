@@ -11,9 +11,9 @@ int main()
 {
 	//menu();
 
-	string start = "DES RENFORTS ARRIVENT DE VIENNE NE PAS METTRE FIN AUX HOSTILITES", key = "1789";
-	string __new = Cryptools::Bazeries(start,key, ALPHABET::UPPER, MODE::CRYPT);
-	string __old = Cryptools::Bazeries(__new, key, ALPHABET::UPPER, MODE::UNCRYPT);
+	string start = "VINCENT LE GENIE DES MATHEMATIQUES", key = "9865";
+	string __new = Cryptools::Bazeries(start,key, ALPHABET::NORMAL, MODE::CRYPT);
+	string __old = Cryptools::Bazeries(__new, key, ALPHABET::NORMAL, MODE::UNCRYPT);
 	cout << start << endl << __new << endl << __old << endl;
 	
 

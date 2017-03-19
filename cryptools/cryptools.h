@@ -157,6 +157,8 @@ public:
 		}
 		return ret; // on retourn la string
 	}
+	
+	//voir chiffrement de Bazeries sur google :)
 	static inline std::string Bazeries(std::string const &string, std::string const &numerical_key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
 	{
 		std::string key = fixkey(numerical_key);
@@ -177,6 +179,7 @@ public:
 
 					if ((i + j + gapfixer) < fixed_string.size())
 					{
+						fixed_string[i + j + gapfixer] = to(fixed_string[i + j + gapfixer], alphabet);
 						if (testcharacter(fixed_string[i + j + gapfixer], ptr))
 							string_reverse_vector[i] += fixed_string[i + j + gapfixer];
 						else
@@ -193,9 +196,9 @@ public:
 				gapfixer += (key[i%key.size()] - '0' - 1 );
 				i++;
 			}
-		}
+		} // partie du code modifiant les grouppes de mot pour la transpostion
 		if (mode == MODE::CRYPT)
-			return Cryptools::VignereNumericalKey(reverse(string_reverse_vector, fixed_string_space_pos), key, alphabet, mode);
+			return Cryptools::VignereNumericalKey(reverse(string_reverse_vector, fixed_string_space_pos), key, alphabet, mode); //simple codage avec le chiffrement de vignere mais adapté pour une clé uniquement numerique
 		else
 			return reverse(string_reverse_vector, fixed_string_space_pos);
 	}
