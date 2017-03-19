@@ -5,6 +5,7 @@ Program with free acces but you need to ask me before professional use
 */
 #pragma once
 #include <string>
+#include <vector>
 
 #define elif else if
 
@@ -28,6 +29,7 @@ std::string sLOWER("abcdefghijklmnopqrstuvwxyz");
 
 //si le caractere n'appartient pas a l'alphabet utilisé
 const char unknowcar = 1;
+//const char uselesscar = 'X';
 
 
 class Cryptools
@@ -129,6 +131,74 @@ public:
 		}
 		return ret;
 	}
+	static inline std::string VignereNumericalKey(std::string const &string, std::string const &numerical_key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
+	{
+		std::string key = fixkey(numerical_key);
+		std::string ret = string; //pour le ret
+		std::string *ptr = chooseAlphabet(alphabet); //permet de faire pointé ptr vers le bonne alphabet
+		size_t i = 0; //compteur
+		for (auto &car : ret)
+		{
+			car = to(car, alphabet); // permet de mettre les lettre en min/maj selon le choix de l'alphabet
+			if (testcharacter(car, ptr)) //si le caractere appartient a l'alphabet
+			{
+				if (mode == MODE::CRYPT) //si on crypt
+					car = (*ptr)[(getpos(car, ptr) + (key[i % key.size()] - '0')) % ptr->size()]; //gl&hf
+				else // sinon
+					car = (*ptr)[(ptr->size() + (getpos(car, ptr)) - (key[i % key.size()] - '0')) % ptr->size()]; //gl&hf
+
+				i++; // on incremente i
+			}
+			elif(car != ' ') //sinon si le caratcere n'appartient pas mais n'est pas un escpace
+			{
+				car = unknowcar; //on le change
+				i++; // on incremente i
+			}
+		}
+		return ret; // on retourn la string
+	}
+	static inline std::string Bazeries(std::string const &string, std::string const &numerical_key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
+	{
+		std::string key = fixkey(numerical_key);
+		std::string *ptr = chooseAlphabet(alphabet);
+		std::vector<std::string> string_reverse_vector;
+		std::vector<size_t> fixed_string_space_pos;
+		std::string fixed_string = fixstring(string, &fixed_string_space_pos);
+		if(mode == MODE::UNCRYPT)
+			fixed_string = Cryptools::VignereNumericalKey(fixed_string,key, alphabet, mode);
+		{
+			int i = 0, gapfixer = 0;
+			bool cont = true;
+			while (cont)
+			{
+				string_reverse_vector.push_back(std::string());
+				for (int j = 0; j < (key[i%key.size()] - '0'); ++j)
+				{
+
+					if ((i + j + gapfixer) < fixed_string.size())
+					{
+						if (testcharacter(fixed_string[i + j + gapfixer], ptr))
+							string_reverse_vector[i] += fixed_string[i + j + gapfixer];
+						else
+						{
+							string_reverse_vector[i] += unknowcar;
+						}
+					}
+					else
+					{
+						cont = false;	
+						break;
+					}
+				}
+				gapfixer += (key[i%key.size()] - '0' - 1 );
+				i++;
+			}
+		}
+		if (mode == MODE::CRYPT)
+			return Cryptools::VignereNumericalKey(reverse(string_reverse_vector, fixed_string_space_pos), key, alphabet, mode);
+		else
+			return reverse(string_reverse_vector, fixed_string_space_pos);
+	}
 
 private:
 	static inline std::string* chooseAlphabet(ALPHABET const &alphabet)
@@ -188,6 +258,7 @@ private:
 		default:
 			return car;
 			break;
+		return car;
 		}
 	}// permet de mettre les lettre en min/maj selon le choix de l'alphabet
 	static inline bool testcharacter(char const car,std::string *alphabet) //test le caratctere
@@ -207,4 +278,55 @@ private:
 		}
 		return 0;
 	}
+	static inline std::string fixkey(std::string const &key)
+	{
+		std::string rep;
+		bool test = false;
+		for (auto &i : key)
+		{
+			if (i <= '9' && i >= '0')
+				rep += i;
+			if (i != '0')
+				test = true;
+		}
+		if (rep == "" || !test)
+			return "1";
+		return rep;
+	}
+	static inline std::string fixstring(std::string const &str, std::vector<size_t> *vector)
+	{
+		std::string rep;
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			if (str[i] == ' ')
+			{
+				vector->push_back(i);
+			}
+			else
+			{
+				rep += str[i];
+			}
+		}
+		return rep;
+	}
+	static inline std::string reverse(std::vector<std::string> &vector,std::vector<size_t> space)
+	{
+		std::string rep;
+		for (auto &i : vector)
+		{
+			rep += reverse_string(i);
+		}
+		for (auto &i : space)
+		{
+			rep.insert(rep.begin() + i, ' ');
+		}
+		return rep;
+	}
+	static inline std::string reverse_string(std::string const &str)
+	{
+		std::string rep(str);
+		std::reverse(rep.begin(), rep.end());
+		return rep;
+	}
+
 };
