@@ -14,34 +14,34 @@ void menu()
 	do
 	{
 		crep = 0;
-		std::string input, output, key;
+		std::wstring input, output, key;
 		MODE mode;
 		ALPHABET alphabet = ALPHABET::SPACEALL;
 		int rep = 0, rep2 = 0, ikey = 0;
 		do
 		{
-			std::cout << "1-XOR\n2-Cesar\n3-Vignere\n4-PMS\nWich encryption would you use ?\n";
+			std::wcout << L"1-XOR\n2-Cesar\n3-Vignere\n4-PMS\nWich encryption would you use ?\n";
 			std::cin >> rep;
 		} while (!(rep <= 4 && rep >= 1));
 		do
 		{
-			std::cout << "1-Crypt\n2-Uncrypt\nWhat would you want to do ?\n";
+			std::wcout << L"1-Crypt\n2-Uncrypt\nWhat would you want to do ?\n";
 			std::cin >> rep2;
 		} while (rep2 != 1 && rep2 != 2);
 		mode = (rep2 == 1) ? MODE::CRYPT : MODE::UNCRYPT;
-		std::cout << std::endl << "Enter string : ";
+		std::wcout << std::endl << "Enter wstring : ";
 		std::cin.ignore();
-		std::getline(std::cin, input);
+		std::getline(std::wcin, input);
 		if (rep == 2)
 		{
-			std::cout << "Enter the key : ";
+			std::wcout << L"Enter the key : ";
 			std::cin >> ikey;
 		}
 		else
 		{
-			std::cout << "Enter passphrase : ";
+			std::wcout << L"Enter passphrase : ";
 			std::cin.ignore();
-			std::getline(std::cin, key);
+			std::getline(std::wcin, key);
 		}
 		switch (rep)
 		{
@@ -58,11 +58,11 @@ void menu()
 			output = Cryptools::PMS(input, key, alphabet, mode);
 			break;
 		default:
-			output = "Error";
+			output = L"Error";
 			break;
 		}
-		std::cout << "Output : " << output << std::endl;
-		std::cout << "Continue (Y/N)\n";
+		std::wcout << L"Output : " << output << std::endl;
+		std::wcout << L"Continue (Y/N)\n";
 		std::cin >> crep;
 	} while (crep == 'Y');
 }
