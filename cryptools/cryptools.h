@@ -31,7 +31,6 @@ std::wstring sLOWER(L"abcdefghijklmnopqrstuvwxyz");
 
 //si le caractere n'appartient pas a l'alphabet utilisé
 const wchar_t unknowcar = 1;
-//const char uselesscar = 'X';
 
 
 class Cryptools
