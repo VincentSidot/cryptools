@@ -179,23 +179,23 @@ public:
 		}
 		return ret;
 	}
-	static inline std::wstring AtmCongruentialPMS(std::wstring const &wstring, std::wstring const &key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
+	static inline std::wstring AtmCongruentialPMS(std::wstring const &string, std::wstring const &key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
 	{
-		std::wstring ret = wstring;
+		std::wstring ret = string;
 		std::wstring *ptr = chooseAlphabet(alphabet);
-		std::vector<size_t> mixer = randomNoRep(sum(key, ptr), wstring.size());
-		for (size_t i = 0; i < wstring.size(); i++)
+		std::vector<size_t> mixer = randomNoRep(sum(key, ptr), string.size());
+		for (size_t i = 0; i < string.size(); i++)
 		{
 			if (mode == CRYPT)
 			{
-				ret[i] = wstring[mixer[i]];
+				ret[i] = string[mixer[i]];
 			}
 			else
 			{
-				ret[i] = wstring[search<size_t>(mixer, i)];
+				ret[i] = string[search<size_t>(mixer, i)];
 			}
 		}
-		ret = Cryptools::PMS(wstring, key, alphabet, mode);
+		ret = Cryptools::PMS(string, key, alphabet, mode);
 		return ret;
 	}
 	
@@ -227,8 +227,10 @@ public:
 	}
 
 	//voir chiffrement de Bazeries sur google :)
-	static inline std::wstring Bazeries(std::wstring const &wstring, std::wstring const &numerical_key, ALPHABET const &alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
+	static inline std::wstring Bazeries(std::wstring const &wstring, std::wstring const &numerical_key, ALPHABET alphabet = ALPHABET::ALL, MODE const &mode = MODE::CRYPT)
 	{
+		if (alphabet == ALPHABET::SPACEALL)
+			alphabet = ALPHABET::ALL;
 		std::wstring key = fixkey(numerical_key);
 		std::wstring *ptr = chooseAlphabet(alphabet);
 		std::vector<std::wstring> wstring_reverse_vector;
@@ -269,6 +271,10 @@ public:
 			return Cryptools::VignereNumericalKey(reverse(wstring_reverse_vector, fixed_wstring_space_pos), key, alphabet, mode); //simple codage avec le chiffrement de vignere mais adapté pour une clé uniquement numerique
 		else
 			return reverse(wstring_reverse_vector, fixed_wstring_space_pos);
+	}
+	static inline size_t getSum(std::wstring const &string, ALPHABET const &alphabet)
+	{
+		return sum(string, chooseAlphabet(alphabet));
 	}
 
 private:
@@ -404,22 +410,16 @@ private:
 		std::linear_congruential_engine<size_t, 48271, 0, 2147483647> random_engine(seed);
 
 		std::vector<size_t> rep;
+		std::vector<bool> isUsed;
+		isUsed.resize(max - min, false);
 		size_t temp;
 		while (rep.size() < (max - min))
 		{
 			temp = (random_engine() % (max - min)) + min;
 			bool test = true;
-			for (auto &i : rep)
+			if (!isUsed[temp])
 			{
-				if (temp == i)
-				{
-					test = false;
-					break;
-				}
-
-			}
-			if (test)
-			{
+				isUsed[temp] = true;
 				rep.push_back(temp);
 			}
 		}
